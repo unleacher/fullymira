@@ -2,16 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Chat Viewer</title>
+    <title>Chat Widget</title>
 </head>
 <body>
-    <div id="chat">
-        <!-- Hier wird der Twitch-Chat angezeigt -->
-    </div>
+    <h1>Live Chat</h1>
+    <ul id="chat"></ul>
+    <input type="text" id="message" placeholder="Nachricht eingeben">
+    <button id="send">Senden</button>
 
-    <!-- Hier kannst du weitere HTML-Elemente hinzufügen, z.B. Steuerelemente für deine Anwendung -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const socket = io();
 
-    <script src="main.js"></script>
+        const chat = document.getElementById('chat');
+        const messageInput = document.getElementById('message');
+        const sendButton = document.getElementById('send');
+
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message) {
+                socket.emit('message', message);
+                messageInput.value = '';
+            }
+        });
+
+        socket.on('message', (message) => {
+            const li = document.createElement('li');
+            li.textContent = message;
+            chat.appendChild(li);
+        });
+    </script>
 </body>
 </html>
+
